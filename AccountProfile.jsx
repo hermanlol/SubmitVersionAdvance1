@@ -69,7 +69,7 @@ export default class AccountProfile extends React.Component {
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getTalentProfile',
+            url: 'https://talentservicesprofileadvance1.azurewebsites.net/profile/profile/getTalentProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -103,29 +103,30 @@ export default class AccountProfile extends React.Component {
         //debugger;
 
         let newProfile = Object.assign({}, this.state.profileData, newValues)
-        this.setState({
-            profileData: newProfile
-        }, this.saveProfile)
+        this.saveProfile(newProfile);
     }
 
     updateForComponentId(componentId, newValues) {
         this.updateAndSaveData(newValues)
     }
 
-    saveProfile() {
+    saveProfile(newProfile) {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/updateTalentProfile',
+            url: 'https://talentservicesprofileadvance1.azurewebsites.net/profile/profile/updateTalentProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
             },
             type: "POST",
-            data: JSON.stringify(this.state.profileData),
+            data: JSON.stringify(newProfile),
             success: function (res) {
                 console.log(res)
                 if (res.success == true) {
                     TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
+                    this.setState({
+                        profileData: newProfile
+                    })
                 } else {
                     TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
                 }
@@ -135,7 +136,7 @@ export default class AccountProfile extends React.Component {
                 TalentUtil.notification.show("Error", "error", null, null);
                 console.log(res)
                 console.log(a)
-               console.log(b)
+                console.log(b)
             }
         })
     }
@@ -270,7 +271,7 @@ export default class AccountProfile extends React.Component {
                                             <PhotoUpload
                                                 imageId={this.state.profileData.profilePhotoUrl}
                                                 updateProfileData={this.updateWithoutSave}
-                                                savePhotoUrl='http://localhost:60290/profile/profile/updateProfilePhoto'
+                                                savePhotoUrl='https://talentservicesprofileadvance1.azurewebsites.net/profile/profile/updateProfilePhoto'
                                             />
                                         </FormItemWrapper>
                                         {/*<FormItemWrapper*/}

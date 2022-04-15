@@ -1,10 +1,12 @@
 ﻿/* Photo upload section */
-import React, { Component } from "react";
+import React, { useState, Component } from "react";
 import { Button, Image, Icon } from "semantic-ui-react";
 import Cookies from "js-cookie";
 
 export default class PhotoUpload extends Component {
     constructor(props) {
+        //const [load, setLoad] = React.useState(false);
+        //let [isWaiting, setWaiting] = useState(false);
         super(props);
         this.state = {
             src: "",
@@ -13,14 +15,16 @@ export default class PhotoUpload extends Component {
             imageSrc: "",
             imageId: "",
             showUpload: false,
+            disableButton: false
         };
 
         this.handleChangeImage = this.handleChangeImage.bind(this);
         this.fileSelectedHandler = this.fileSelectedHandler.bind(this);
-        this.handleUplaod = this.handleUpload.bind(this);
+        this.handleUpload = this.handleUpload.bind(this);
+        this.disable = this.disable.bind(this);
         this.maxFileSize = 3000000;
         this.acceptedFileType = [
-            "image/jpeg",            
+            "image/jpeg",
             "image/jpg",
             "image/png",
         ];
@@ -51,7 +55,7 @@ export default class PhotoUpload extends Component {
             localSelectedFileName = event.target.files[0].name;
             localImageSrc = URL.createObjectURL(event.target.files[0]);
         }
-
+        //debugger;
         this.setState({
             selectedFile: localSelectedFile,
             selectedFileName: localSelectedFileName,
@@ -59,13 +63,26 @@ export default class PhotoUpload extends Component {
             src: localImageSrc,
             showUpload: true,
         });
-    }
 
+        //console.log(this.state);
+    }
+    disable() {
+        //debugger;
+        this.setState({
+            disableButton: true,
+        });
+        this.handleUpload();
+    }
     handleUpload() {
+        //debugger;
+        let but = document.getElementById('uploadButton');
+        but.disabled = true;
+        //this.setState({
+        //    data: data
+        //}, () => this.props.consumeData(this.state.data));
         let data = new FormData();
         data.append("file", this.state.selectedFile);
         var cookies = Cookies.get("talentAuthToken");
-
         $.ajax({
             url: this.props.savePhotoUrl,
             headers: {
@@ -83,7 +100,7 @@ export default class PhotoUpload extends Component {
                         profilePhotoUrl: this.state.localImageSrc,
                     };
                     TalentUtil.notification.show(
-                        "Profile photo updated sucessfully123",
+                        "Profile photo updated sucessfully",
                         "success",
                         null,
                         null
@@ -94,8 +111,10 @@ export default class PhotoUpload extends Component {
                         },
                         this.props.updateProfileData(data)
                     );
+                    but.disabled = false;
                 } else {
                     TalentUtil.notification.show(res.message, "error", null, null);
+                    but.disabled = false;
                 }
             }.bind(this),
             error: function (res, status, error) {
@@ -107,9 +126,13 @@ export default class PhotoUpload extends Component {
                 );
             },
         });
+        this.setState({
+            disableButton: false,
+        })
     }
 
     render() {
+        //debugger;
         let imgSrc = this.state.showUpload ? this.state.src : this.props.imageId;
         let imgGen = this.state.src ? this.state.src : this.props.imageId;
         return (
@@ -144,9 +167,11 @@ export default class PhotoUpload extends Component {
                         <div className="ui sixteen wide column">
                             <br />
                             <button
+                                id="uploadButton"
                                 type="button"
                                 className="ui black left floated button"
-                                onClick={this.handleUplaod}
+
+                                onClick={this.handleUpload}
                             >
                                 <Icon name="upload" />
                                 Upload
