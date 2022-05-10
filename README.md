@@ -7,6 +7,8 @@ DATABASE : MONGODB, AWS
 
 WEB TECHNOLOGIES : REACT JS, ASP.NET /MVC/Web API, AJAX, HTML5/JavaScript/CSS
 
+CSS Library: Semantic UI
+
 ## Back-end
 
 Build action methods in controllers and in services to fetch and update data from the database
